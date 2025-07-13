@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADFNet.Core", "ADFNet.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADFNet.Core.Tests", "ADFNet.Core.Tests\ADFNet.Core.Tests.csproj", "{FD232D04-9F1C-4D57-993A-D249A71ED360}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADFNet.OrgMode", "ADFNet.OrgMode\ADFNet.OrgMode.csproj", "{D7F302BA-549B-4DC5-9635-0E21FAF9A86A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{FD232D04-9F1C-4D57-993A-D249A71ED360}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD232D04-9F1C-4D57-993A-D249A71ED360}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD232D04-9F1C-4D57-993A-D249A71ED360}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F302BA-549B-4DC5-9635-0E21FAF9A86A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F302BA-549B-4DC5-9635-0E21FAF9A86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F302BA-549B-4DC5-9635-0E21FAF9A86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F302BA-549B-4DC5-9635-0E21FAF9A86A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
