@@ -1,0 +1,44 @@
+name: Build & Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'  # Triggers on tags like v1.0.0
+
+jobs:
+  build-and-pack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: 📦 Restore dependencies
+        run: dotnet restore ADFNet.sln
+
+      - name: 🔨 Build
+        run: make build
+
+      - name: 🧪 Run tests
+        run: make test-nobuild
+
+      - name: 📦 Pack NuGet (preview or production)
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "🚀 Production release detected"
+            make package-nobuild
+          else
+            echo "🔬 Preview build"
+            make package-preview-nobuild
+          fi
+
+      - name: 🚀 Push to NuGet
+        if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
+        run: dotnet nuget push nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

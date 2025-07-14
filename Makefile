@@ -2,9 +2,11 @@
 SOLUTION_NAME := ADFNet
 NUGET_OUTPUT := ./nupkg
 CONFIGURATION := Release
-.PHONY: all build pack clean test test-nobuild package-nobuild
+.PHONY: all build pack clean test test-nobuild package-nobuild package-preview-nobuild
 # Default target
-all: build
+all: clean build test-nobuild package-nobuild
+
+package-preview: clean build test-nobuild package-preview-nobuild
 
 # Build the solution
 build:
@@ -35,6 +37,11 @@ pack:
 package-nobuild:
 	@mkdir -p $(NUGET_OUTPUT)
 	dotnet pack $(SOLUTION_NAME).sln -c $(CONFIGURATION) -o $(NUGET_OUTPUT) --no-build
+
+# Create NuGet package(s) (CI-optimised Preview Nuget packaging)
+package-preview-nobuild:
+	@mkdir -p $(NUGET_OUTPUT)
+	dotnet pack $(SOLUTION_NAME).sln -c $(CONFIGURATION) -o $(NUGET_OUTPUT) --no-build --version-suffix preview
 
 # Clean build artifacts
 clean:
