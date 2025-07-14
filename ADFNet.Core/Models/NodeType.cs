@@ -1,10 +1,12 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace ADFNet.Core;
+namespace ADFNet.Core.Models;
 
 public enum NodeType
 {
+    [Description("type")]
+    Document,
     [Description("paragraph")]
     Paragraph,
     [Description("text")]

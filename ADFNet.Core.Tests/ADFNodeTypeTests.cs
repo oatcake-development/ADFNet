@@ -13,14 +13,14 @@ public class ADFNodeTypeTests
         [Test]
         public void ParagraphNode_HasCorrectType()
         {
-            var node = new ParagraphNode(new List<ADFNode>());
+            var node = new ParagraphNode { Content = new List<ADFNode>() };
             AssertNodeType(node, "paragraph");
         }
 
         [Test]
         public void TextNode_HasCorrectType()
         {
-            var node = new TextNode("Hello world");
+            var node = new TextNode { Text = "Hello world"};
             AssertNodeType(node, "text");
         }
 
@@ -34,7 +34,7 @@ public class ADFNodeTypeTests
         [Test]
         public void ListItemNode_HasCorrectType()
         {
-            var node = new ListItemNode(new List<ADFNode>());
+            var node = new ListItemNode { Content = new List<ADFNode>()};
             AssertNodeType(node, "listItem");
         }
 

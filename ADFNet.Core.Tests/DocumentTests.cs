@@ -1,48 +1,25 @@
-// using ADFNet.Core.Models;
-// using System.Collections.Generic;
-//
-// namespace ADFNet.Core.Tests;
-//
-// [TestFixture]
-// public class DocumentTests
-// {
-//     private ADFDocument _validDoc;
-//
-//     [SetUp]
-//     public void Setup()
-//     {
-//         _validDoc = new ADFDocument
-//         {
-//             Content = new List<ADFNode>
-//             {
-//                 new ADFNode { Type = "paragraph", Text = "Hello world" }
-//             }
-//         };
-//     }
-//
-//     [Test]
-//     public void ADFDocument_WithValidContent_IsValid()
-//     {
-//         Assert.IsTrue(_validDoc.IsValid());
-//     }
-//
-//     [Test]
-//     public void ADFDocument_WithoutContent_IsInvalid()
-//     {
-//         var emptyDoc = new ADFDocument();
-//         Assert.IsFalse(emptyDoc.IsValid());
-//     }
-//
-//     [Test]
-//     public void ADFNode_WithTextContent_AssignsCorrectValues()
-//     {
-//         var node = new ADFNode
-//         {
-//             Type = "text",
-//             Text = "Hello World"
-//         };
-//
-//         Assert.That(node.Type, Is.EqualTo("text"));
-//         Assert.That(node.Text, Is.EqualTo("Hello World"));
-//     }
-// }
+using ADFNet.Core.Models;
+using System.Collections.Generic;
+
+namespace ADFNet.Core.Tests;
+
+[TestFixture]
+public class DocumentTests
+{
+    [Test]
+    public void Document_HasCorrectType()
+    {
+        var doc = new ADFDocument();
+        Assert.That(doc.Type, Is.EqualTo(NodeType.Document));
+    }
+
+    [Test]
+    public void Document_CanContainParagraphs()
+    {
+        var para = new ParagraphNode();
+        var doc = new ADFDocument(new[] { para });
+
+        Assert.That(doc.Content, Has.Count.EqualTo(1));
+        Assert.That(doc.Content[0], Is.InstanceOf<ParagraphNode>());
+    }
+}

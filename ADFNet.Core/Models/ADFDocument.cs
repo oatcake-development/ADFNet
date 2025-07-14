@@ -1,13 +1,15 @@
 namespace ADFNet.Core.Models;
 
-public class ADFDocument
+public class ADFDocument : ADFNode
 {
-    public int Version { get; set; } = 1;
-    public string Type { get; set; } = "doc";
+    public override NodeType Type => NodeType.Document;
+
     public List<ADFNode> Content { get; set; } = new();
 
-    public bool IsValid()
+    public ADFDocument() { }
+
+    public ADFDocument(IEnumerable<ADFNode> content)
     {
-        return Type == "doc" && Version == 1 && Content.Any();
+        Content.AddRange(content);
     }
 }
