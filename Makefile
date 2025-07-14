@@ -1,28 +1,44 @@
 # Makefile for building and packaging ADFNet as a NuGet package
-
-PROJECT_NAME := ADFNet.Core
+SOLUTION_NAME := ADFNet
+NUGET_OUTPUT := ./nupkg
 CONFIGURATION := Release
-OUTPUT_DIR := ./nupkg
-CS_PROJ := ./ADFNet.Core/ADFNet.Core.csproj
+.PHONY: all build pack clean test test-nobuild package-nobuild
+# Default target
+all: build
 
-.PHONY: all build clean pack
-
-all: build pack
-
+# Build the solution
 build:
-	@echo "🔧 Building $(PROJECT_NAME)..."
-	dotnet build $(CS_PROJ) -c $(CONFIGURATION)
+	@echo "🔧 Building $(SOLUTION_NAME)..."
+	dotnet build $(SOLUTION_NAME).sln -c $(CONFIGURATION)
 
-clean:
-	@echo "🧹 Cleaning build artifacts..."
-	dotnet clean $(CS_PROJ)
-	rm -rf $(OUTPUT_DIR)
+# Run unit tests (friendly)
+test:
+	@echo "🧪 Testing $(SOLUTION_NAME)..."
+	dotnet test $(SOLUTION_NAME).sln -c $(CONFIGURATION)
 
+# Run unit tests (CI-optimised)
+test-nobuild:
+	dotnet test $(SOLUTION_NAME).sln -c $(CONFIGURATION) --no-build
+
+# Create NuGet package(s) (friendly)
 pack:
 	@echo "📦 Packing NuGet package..."
-	dotnet pack $(CS_PROJ) \
+	@mkdir -p $(NUGET_OUTPUT)
+	dotnet pack $(SOLUTION_NAME).sln \
 		-c $(CONFIGURATION) \
-		-o $(OUTPUT_DIR) \
+		-o $(NUGET_OUTPUT) \
 		--include-symbols \
-		--include-source
+        --include-source
+
+
+# Create NuGet package(s) (CI-optimised)
+package-nobuild:
+	@mkdir -p $(NUGET_OUTPUT)
+	dotnet pack $(SOLUTION_NAME).sln -c $(CONFIGURATION) -o $(NUGET_OUTPUT) --no-build
+
+# Clean build artifacts
+clean:
+	@echo "🧹 Cleaning build artifacts..."
+	dotnet clean $(SOLUTION_NAME).sln -c $(CONFIGURATION)
+	@rm -rf $(NUGET_OUTPUT)
 
