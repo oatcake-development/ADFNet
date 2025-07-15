@@ -9,7 +9,7 @@
         <PackageTags>ADF Atlassian Parser Exporter</PackageTags>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <RepositoryUrl>https://github.com/oatcakeltd/ADFNet</RepositoryUrl>
+        <RepositoryUrl>https://github.com/oatcake-development/ADFNet</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 

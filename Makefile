@@ -3,6 +3,7 @@ SOLUTION_NAME := ADFNet
 PROJECTS := ADFNet.Core ADFNet.Json ADFNet.OrgMode
 NUGET_OUTPUT := ./nupkg
 CONFIGURATION := Release
+VERSION_SUFFIX := preview.$(shell date +%Y%m%d%H%M)
 
 .PHONY: all build pack clean test test-nobuild package-nobuild package-preview-nobuild
 
@@ -60,7 +61,7 @@ package-preview-nobuild:
 			-c $(CONFIGURATION) \
 			-o $(NUGET_OUTPUT)/$$proj \
 			--no-build \
-			--version-suffix preview \
+			--version-suffix $(VERSION_SUFFIX) \
 			--include-symbols \
 			--include-source; \
 	done
