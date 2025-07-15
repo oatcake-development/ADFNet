@@ -1,8 +1,11 @@
-# Makefile for building and packaging ADFNet as a NuGet package
+# Makefile for building and packaging ADFNet as NuGet packages
 SOLUTION_NAME := ADFNet
+PROJECTS := ADFNet.Core ADFNet.Json ADFNet.OrgMode
 NUGET_OUTPUT := ./nupkg
 CONFIGURATION := Release
+
 .PHONY: all build pack clean test test-nobuild package-nobuild package-preview-nobuild
+
 # Default target
 all: clean build test-nobuild package-nobuild
 
@@ -24,24 +27,43 @@ test-nobuild:
 
 # Create NuGet package(s) (friendly)
 pack:
-	@echo "📦 Packing NuGet package..."
+	@echo "📦 Packing NuGet packages..."
 	@mkdir -p $(NUGET_OUTPUT)
-	dotnet pack $(SOLUTION_NAME).sln \
-		-c $(CONFIGURATION) \
-		-o $(NUGET_OUTPUT) \
-		--include-symbols \
-        --include-source
-
+	@for proj in $(PROJECTS); do \
+		echo "📦 Packing $$proj..."; \
+		dotnet pack ./$$proj/$$proj.csproj \
+			-c $(CONFIGURATION) \
+			-o $(NUGET_OUTPUT)/$$proj \
+			--include-symbols \
+			--include-source; \
+	done
 
 # Create NuGet package(s) (CI-optimised)
 package-nobuild:
 	@mkdir -p $(NUGET_OUTPUT)
-	dotnet pack $(SOLUTION_NAME).sln -c $(CONFIGURATION) -o $(NUGET_OUTPUT) --no-build
+	@for proj in $(PROJECTS); do \
+		echo "📦 Packing $$proj (no build)..."; \
+		dotnet pack ./$$proj/$$proj.csproj \
+			-c $(CONFIGURATION) \
+			-o $(NUGET_OUTPUT)/$$proj \
+			--no-build \
+			--include-symbols \
+			--include-source; \
+	done
 
 # Create NuGet package(s) (CI-optimised Preview Nuget packaging)
 package-preview-nobuild:
 	@mkdir -p $(NUGET_OUTPUT)
-	dotnet pack $(SOLUTION_NAME).sln -c $(CONFIGURATION) -o $(NUGET_OUTPUT) --no-build --version-suffix preview
+	@for proj in $(PROJECTS); do \
+		echo "📦 Packing $$proj (preview, no build)..."; \
+		dotnet pack ./$$proj/$$proj.csproj \
+			-c $(CONFIGURATION) \
+			-o $(NUGET_OUTPUT)/$$proj \
+			--no-build \
+			--version-suffix preview \
+			--include-symbols \
+			--include-source; \
+	done
 
 # Clean build artifacts
 clean:
@@ -49,3 +71,16 @@ clean:
 	dotnet clean $(SOLUTION_NAME).sln -c $(CONFIGURATION)
 	@rm -rf $(NUGET_OUTPUT)
 
+# For CI builds on push to main
+ci-preview:
+	$(MAKE) clean
+	$(MAKE) build
+	$(MAKE) test-nobuild
+	$(MAKE) package-preview-nobuild
+
+# For CI builds on tag
+ci-release:
+	$(MAKE) clean
+	$(MAKE) build
+	$(MAKE) test-nobuild
+	$(MAKE) package-nobuild

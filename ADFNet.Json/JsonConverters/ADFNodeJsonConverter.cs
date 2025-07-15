@@ -1,6 +1,8 @@
-namespace ADFNet.Json.JsonConverters;
+namespace ADFNet.Json.JsonConverters
 
-public class ADFNodeJsonConverter
 {
+    public class ADFNodeJsonConverter
+    {
     
+    }
 }

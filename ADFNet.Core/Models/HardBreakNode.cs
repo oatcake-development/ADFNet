@@ -13,9 +13,12 @@
  * limitations under the License.
  */
 
-namespace ADFNet.Core.Models;
+namespace ADFNet.Core.Models
 
-public class HardBreakNode : ADFNode
 {
-    public override NodeType Type => NodeType.HardBreak;
+    public class HardBreakNode : ADFNode
+    {
+        public override NodeType Type => NodeType.HardBreak;
+    }
+    
 }

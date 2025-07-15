@@ -13,10 +13,14 @@
  * limitations under the License.
  */
 
-namespace ADFNet.Core.Models;
+using System.Collections.Generic;
 
-public class BulletListNode : ADFNode
+namespace ADFNet.Core.Models
+
 {
-    public override NodeType Type => NodeType.BulletList;
-    public List<ListItemNode> Items { get; set; } = new();
+    public class BulletListNode : ADFNode
+    {
+        public override NodeType Type => NodeType.BulletList;
+        public List<ListItemNode> Items { get; set; } =  new List<ListItemNode>();
+    }
 }

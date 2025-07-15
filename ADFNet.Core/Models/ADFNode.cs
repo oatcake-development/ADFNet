@@ -13,9 +13,11 @@
  * limitations under the License.
  */
 
-namespace ADFNet.Core.Models;
+namespace ADFNet.Core.Models
 
-public abstract class ADFNode
 {
-    public abstract NodeType Type { get; }
+    public abstract class ADFNode
+    {
+        public abstract NodeType Type { get; }
+    }
 }

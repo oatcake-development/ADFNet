@@ -13,18 +13,23 @@
  * limitations under the License.
  */
 
-namespace ADFNet.Core.Models;
+using System.Collections.Generic;
+using ADFNet.Core.Models;
 
-public class ADFDocument : ADFNode
+namespace ADFNet.Core.Models
 {
-    public override NodeType Type => NodeType.Document;
 
-    public List<ADFNode> Content { get; set; } = new();
-
-    public ADFDocument() { }
-
-    public ADFDocument(IEnumerable<ADFNode> content)
+    public class ADFDocument : ADFNode
     {
-        Content.AddRange(content);
+        public override NodeType Type => NodeType.Document;
+
+        public List<ADFNode> Content { get; set; } = new List<ADFNode>();
+
+        public ADFDocument() { }
+
+        public ADFDocument(IEnumerable<ADFNode> content)
+        {
+            Content.AddRange(content);
+        }
     }
 }

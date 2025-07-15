@@ -16,9 +16,10 @@
 using ADFNet.Core.Models;
 using JetBrains.Annotations;
 
-namespace ADFNet.Core.Export;
-
-public interface IADFExporter
+namespace ADFNet.Core.Export
 {
-    string Export(ADFNode node);
+    public interface IADFExporter
+    {
+        string Export(ADFNode node);
+    }
 }

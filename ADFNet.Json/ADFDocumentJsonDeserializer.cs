@@ -16,95 +16,105 @@
  * limitations under the License.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using ADFNet.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ADFNet.Json;
+namespace ADFNet.Json
 
-public static class ADFDocumentJsonDeserializer
 {
-    public static ADFDocument FromJson(string json)
+    public static class ADFDocumentJsonDeserializer
     {
-        var jObject = JObject.Parse(json);
-        return ParseNode(jObject) as ADFDocument
-               ?? throw new JsonException("Root JSON node is not a valid ADFDocument.");
-    }
-
-    private static ADFNode? ParseNode(JObject obj)
-    {
-        var typeStr = obj["type"]?.ToString();
-        if (!Enum.TryParse<NodeType>(typeStr, ignoreCase: true, out var type))
-            return null;
-
-        return type switch
+        public static ADFDocument FromJson(string json)
         {
-            NodeType.Document => ParseDocument(obj),
-            NodeType.Paragraph => ParseParagraph(obj),
-            NodeType.Text => ParseText(obj),
-            NodeType.HardBreak => new HardBreakNode(),
-            NodeType.BulletList => ParseBulletList(obj),
-            NodeType.ListItem => ParseListItem(obj),
-            _ => null
-        };
-    }
+            var jObject = JObject.Parse(json);
+            return ParseNode(jObject) as ADFDocument
+                   ?? throw new JsonException("Root JSON node is not a valid ADFDocument.");
+        }
 
-    private static ADFDocument ParseDocument(JObject obj)
-    {
-        var content = ParseChildren(obj["content"]);
-        return new ADFDocument { Content = content };
-    }
-
-    private static ParagraphNode ParseParagraph(JObject obj)
-    {
-        var content = ParseChildren(obj["content"]);
-        return new ParagraphNode { Content = content };
-    }
-
-    private static TextNode ParseText(JObject obj)
-    {
-        var text = obj["text"]?.ToString() ?? string.Empty;
-        var marks = obj["marks"] as JArray ?? [];
-
-        var node = new TextNode { Text = text };
-        foreach (var mark in marks.OfType<JObject>())
+        private static ADFNode ParseNode(JObject obj)
         {
-            var markType = mark["type"]?.ToString();
-            switch (markType)
+            var typeStr = obj["type"]?.ToString();
+            if (!Enum.TryParse<NodeType>(typeStr, ignoreCase: true, out var type))
+                return null;
+
+            switch (type)
             {
-                case "bold": node.Bold = true; break;
-                case "italic": node.Italic = true; break;
-                case "underline": node.Underline = true; break;
-                case "strike": node.Strike = true; break;
-                case "code": node.Code = true; break;
+                case NodeType.Document:
+                    return ParseDocument(obj);
+                case NodeType.Paragraph:
+                    return ParseParagraph(obj);
+                case NodeType.Text:
+                    return ParseText(obj);
+                case NodeType.HardBreak:
+                    return new HardBreakNode();
+                case NodeType.BulletList:
+                    return ParseBulletList(obj);
+                case NodeType.ListItem:
+                    return ParseListItem(obj);
+                default:
+                    return null;
             }
         }
-        return node;
-    }
 
-    private static BulletListNode ParseBulletList(JObject obj)
-    {
-        var items = ParseChildren(obj["content"]).OfType<ListItemNode>().ToList();
-        return new BulletListNode { Items = items };
-    }
-
-    private static ListItemNode ParseListItem(JObject obj)
-    {
-        var content = ParseChildren(obj["content"]);
-        return new ListItemNode { Content = content };
-    }
-
-    private static List<ADFNode> ParseChildren(JToken? token)
-    {
-        var nodes = new List<ADFNode>();
-        if (token is not JArray array) return nodes;
-
-        foreach (var child in array.OfType<JObject>())
+        private static ADFDocument ParseDocument(JObject obj)
         {
-            var parsed = ParseNode(child);
-            if (parsed != null) nodes.Add(parsed);
+            var content = ParseChildren(obj["content"]);
+            return new ADFDocument { Content = content };
         }
 
-        return nodes;
+        private static ParagraphNode ParseParagraph(JObject obj)
+        {
+            var content = ParseChildren(obj["content"]);
+            return new ParagraphNode { Content = content };
+        }
+
+        private static TextNode ParseText(JObject obj)
+        {
+            var text = obj["text"]?.ToString() ?? string.Empty;
+            var marks = obj["marks"] as JArray ?? new JArray { };
+
+            var node = new TextNode { Text = text };
+            foreach (var mark in marks.OfType<JObject>())
+            {
+                var markType = mark["type"]?.ToString();
+                switch (markType)
+                {
+                    case "bold": node.Bold = true; break;
+                    case "italic": node.Italic = true; break;
+                    case "underline": node.Underline = true; break;
+                    case "strike": node.Strike = true; break;
+                    case "code": node.Code = true; break;
+                }
+            }
+            return node;
+        }
+
+        private static BulletListNode ParseBulletList(JObject obj)
+        {
+            var items = ParseChildren(obj["content"]).OfType<ListItemNode>().ToList();
+            return new BulletListNode { Items = items };
+        }
+
+        private static ListItemNode ParseListItem(JObject obj)
+        {
+            var content = ParseChildren(obj["content"]);
+            return new ListItemNode { Content = content };
+        }
+
+        private static List<ADFNode> ParseChildren(JToken token)
+        {
+            var nodes = new List<ADFNode>();
+            var array = token as JArray;
+            if (array == null) return nodes;
+
+            nodes.AddRange(array.OfType<JObject>().Select(ParseNode).Where(parsed => parsed != null));
+
+            return nodes;
+        }
     }
+    
 }

@@ -13,10 +13,15 @@
  * limitations under the License.
  */
 
-namespace ADFNet.Core.Models;
+using System.Collections.Generic;
 
-public class ParagraphNode : ADFNode
+namespace ADFNet.Core.Models
+
 {
-    public override NodeType Type => NodeType.Paragraph;
-    public List<ADFNode> Content { get; set; } = new();
+    public class ParagraphNode : ADFNode
+    {
+        public override NodeType Type => NodeType.Paragraph;
+        public List<ADFNode> Content { get; set; } = new List<ADFNode>();
+    }
+    
 }
