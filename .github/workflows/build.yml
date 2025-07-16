@@ -10,20 +10,29 @@ on:
 
 jobs:
   versioning:
-    name: 🏷 Generate version suffix
+    name: 🏷 Generate build type and suffix
     runs-on: ubuntu-latest
     outputs:
-      type: ${{ steps.release-type.outputs.type }}
+      type: ${{ steps.set-outputs.outputs.type }}
+      version_suffix: ${{ steps.set-outputs.outputs.version_suffix }}
     steps:
-      - name: Determine release type
-        id: release-type
+      - name: Set release type and version suffix
+        id: set-outputs
         run: |
-          if [[ "${GITHUB_REF_NAME}" == preview-* ]]; then
-            echo "type=preview" >> $GITHUB_OUTPUT
-          else
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && "${GITHUB_REF_NAME}" == v* ]]; then
             echo "type=production" >> $GITHUB_OUTPUT
+            echo "version_suffix=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            # use the tag name as the suffix (e.g. preview-1.2.3)
+            echo "type=preview" >> $GITHUB_OUTPUT
+            echo "version_suffix=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          else
+            # fallback for branch builds — use a timestamp
+            echo "type=preview" >> $GITHUB_OUTPUT
+            echo "version_suffix=preview.$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
           fi
-          
+  
+            
   build:
     name: 🔨 Build
     runs-on: ubuntu-latest
@@ -79,8 +88,8 @@ jobs:
             echo "🚀 Production release detected"
             make package-nobuild
           else
-            echo "🔬 Preview build with suffix ${{ github.ref_name }}"
-            make package-preview VERSION_SUFFIX=${{ github.ref_name }}
+            echo "🔬 Preview build with suffix ${{ needs.versioning.outputs.version_suffix }}"
+            make package-preview VERSION_SUFFIX=${{ needs.versioning.outputs.version_suffix }}
           fi
 
       - uses: actions/upload-artifact@v4
