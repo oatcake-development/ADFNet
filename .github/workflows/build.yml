@@ -65,7 +65,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Run tests
-        run: make test-nobuild
+        run: make test
 
   package:
     name: 📦 Package NuGet
