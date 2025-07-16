@@ -17,6 +17,15 @@ jobs:
         id: version
         run: echo "suffix=preview-$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
 
+      - name: 🏷 Set release tag name
+        id: release
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "release_name=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          else
+            echo "release_name=${{ steps.version.outputs.suffix }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: 🛎 Checkout code
         uses: actions/checkout@v4
 
@@ -56,10 +65,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
         with:
-          name: ${{ github.ref_type == 'tag' && github.ref_name || steps.version.outputs.suffix }}
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || steps.version.outputs.suffix }}
-        files: |
-          nupkg/**/*.nupkg
-          nupkg/**/*.symbols.nupkg
+          name: ${{ steps.release.outputs.release_name }}
+          tag_name: ${{ steps.release.outputs.release_name }}
+          files: |
+            nupkg/**/*.nupkg
+            nupkg/**/*.symbols.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
