@@ -14,22 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       type: ${{ steps.set-outputs.outputs.type }}
-      version_suffix: ${{ steps.set-outputs.outputs.version_suffix }}
+      effective_version: ${{ steps.set-outputs.outputs.effective_version }}
     steps:
       - name: Set release type and version suffix
         id: set-outputs
         run: |
           if [[ "${GITHUB_REF_TYPE}" == "tag" && "${GITHUB_REF_NAME}" == v* ]]; then
             echo "type=production" >> $GITHUB_OUTPUT
-            echo "version_suffix=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+            echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
           elif [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             # use the tag name as the suffix (e.g. preview-1.2.3)
             echo "type=preview" >> $GITHUB_OUTPUT
-            echo "version_suffix=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+            echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
           else
             # fallback for branch builds — use a timestamp
             echo "type=preview" >> $GITHUB_OUTPUT
-            echo "version_suffix=preview.$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
+            echo "effective_version=preview.$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
           fi
   
             
@@ -88,8 +88,8 @@ jobs:
             echo "🚀 Production release detected"
             make package-nobuild
           else
-            echo "🔬 Preview build with suffix ${{ needs.versioning.outputs.version_suffix }}"
-            make package-preview VERSION_SUFFIX=${{ needs.versioning.outputs.version_suffix }}
+            echo "🔬 Preview build with suffix ${{ needs.versioning.outputs.effective_version }}"
+            make package-preview VERSION_SUFFIX=${{ needs.versioning.outputs.effective_version }}
           fi
 
       - uses: actions/upload-artifact@v4
@@ -110,27 +110,19 @@ jobs:
           name: nuget-packages
           path: ./nupkg
 
-      - name: 🧹 Delete existing assets from release (if any)
-        run: |
-          TAG_NAME="${{ github.ref_name }}"
-          gh release view "$TAG_NAME" --json assets -q '.assets[].name' |
-          while read filename; do
-            echo "Deleting asset: $filename"
-            gh release delete-asset "$TAG_NAME" "$filename" -y
-          done
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: ${{ github.ref_name }}
-          tag_name: ${{ github.ref_name }}
-          files: |
-            nupkg/**/*.nupkg
-            nupkg/**/*.symbols.nupkg
+      - name: 📦 Create GitHub Release with gh CLI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EFFECTIVE_VERSION="${{ needs.versioning.outputs.effective_version }}"
+          
+          echo "Creating release for: $EFFECTIVE_VERSION"
+          
+          gh release create "$EFFECTIVE_VERSION" \
+            --title "$EFFECTIVE_VERSION" \
+            --notes "Automated release for $EFFECTIVE_VERSION" \
+            nupkg/**/*.nupkg
+
 
   publish:
     name: 📤 Publish to NuGet
