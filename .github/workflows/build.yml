@@ -103,7 +103,6 @@ jobs:
     name: 🚀 Release
     runs-on: ubuntu-latest
     needs: [package, versioning]
-    if: github.ref_type == 'tag'
     steps:
       - name: Download NuGet packages
         uses: actions/download-artifact@v4
