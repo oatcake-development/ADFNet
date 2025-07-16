@@ -38,7 +38,12 @@ jobs:
             echo "🔬 Preview build"
             make package-preview-nobuild
           fi
-
-      - name: 🚀 Push to NuGet
-        if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
-        run: dotnet nuget push nupkg/**/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: 🚀 Push all NuGet packages individually
+        run: |
+          for pkg in nupkg/**/*.nupkg; do
+            echo "Pushing $pkg..."
+            dotnet nuget push "$pkg" \
+              --api-key "${{ secrets.NUGET_API_KEY }}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
