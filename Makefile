@@ -3,7 +3,7 @@ SOLUTION_NAME := ADFNet
 PROJECTS := ADFNet.Core ADFNet.Json ADFNet.OrgMode
 NUGET_OUTPUT := ./nupkg
 CONFIGURATION := Release
-VERSION_SUFFIX := preview.$(shell date +%Y%m%d%H%M)
+VERSION_SUFFIX ?= preview.$(shell date +%Y%m%d%H%M)
 
 .PHONY: all build pack clean test test-nobuild package-nobuild package-preview-nobuild
 

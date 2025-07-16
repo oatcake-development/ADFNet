@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 🏷 Generate preview version suffix
+        if: github.ref_type != 'tag' && github.ref == 'refs/heads/main'
+        id: version
+        run: echo "suffix=preview-$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
+
       - name: 🛎 Checkout code
         uses: actions/checkout@v4
 
@@ -36,7 +41,7 @@ jobs:
             make package-nobuild
           else
             echo "🔬 Preview build"
-            make package-preview-nobuild
+            make package-preview VERSION_SUFFIX=${{ steps.version.outputs.suffix }}
           fi
       - name: 🚀 Push all NuGet packages individually
         run: |
