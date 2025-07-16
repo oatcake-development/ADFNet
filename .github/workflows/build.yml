@@ -52,3 +52,14 @@ jobs:
               --source https://api.nuget.org/v3/index.json \
               --skip-duplicate
           done
+      - name: 📦 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
+        with:
+          name: ${{ github.ref_type == 'tag' && github.ref_name || steps.version.outputs.suffix }}
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || steps.version.outputs.suffix }}
+        files: |
+          nupkg/**/*.nupkg
+          nupkg/**/*.symbols.nupkg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
