@@ -109,6 +109,9 @@ jobs:
         with:
           name: nuget-packages
           path: ./nupkg
+          
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
 
       - name: 📦 Create GitHub Release with gh CLI
         env:
