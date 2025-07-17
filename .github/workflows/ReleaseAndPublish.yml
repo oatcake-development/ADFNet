@@ -1,4 +1,4 @@
-name: 📦 Package NuGet
+name: 📦 Package NuGet and Create Release
 
 on:
   push:
@@ -10,26 +10,18 @@ jobs:
   package:
     runs-on: ubuntu-latest
 
-    outputs:
-      effective_version: ${{ steps.set-version.outputs.effective_version }}
-
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
-      - name: Set version
-        id: set-version
-        run: |
-          echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-
-      - name: Restore dependencies
-        run: dotnet restore
-
+          
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --configuration Release
 
       - name: Pack NuGet packages
         run: |
@@ -39,8 +31,7 @@ jobs:
               --include-symbols \
               --include-source \
               --configuration Release \
-              --output ./nupkg \
-              --version-suffix "${{ steps.set-version.outputs.effective_version }}"
+              --output ./nupkg
           done
 
       - name: Create GitHub Release

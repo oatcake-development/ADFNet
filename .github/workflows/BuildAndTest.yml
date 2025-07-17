@@ -1,4 +1,4 @@
-name: 🧪 Test .NET
+name: 🧪 Build and run Tests .NET
 
 on:
   push:
