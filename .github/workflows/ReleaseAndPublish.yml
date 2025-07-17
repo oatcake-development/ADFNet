@@ -1,11 +1,7 @@
 name: 📦 Package NuGet and Create Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
-      - 'preview-v*.*.*'
-
+  workflow_dispatch: # Manual trigger from GitHub UI
 jobs:
   package:
     runs-on: ubuntu-latest
