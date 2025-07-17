@@ -1,0 +1,54 @@
+name: 📦 Package NuGet
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - 'preview-v*.*.*'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    outputs:
+      effective_version: ${{ steps.set-version.outputs.effective_version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Set version
+        id: set-version
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          else
+            echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Pack NuGet packages
+        run: |
+          for proj in ./ADFNet.*/*.csproj; do
+            dotnet pack "$proj" \
+              --no-build \
+              --include-symbols \
+              --include-source \
+              --configuration Release \
+              --output ./nupkg \
+              --version-suffix "${{ steps.set-version.outputs.effective_version }}"
+          done
+
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: ./nupkg
