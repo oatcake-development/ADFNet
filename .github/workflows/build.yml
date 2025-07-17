@@ -44,9 +44,6 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Restore
-        run: dotnet restore ADFNet.sln
-
       - name: Build
         run: make build
 
@@ -67,7 +64,13 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
+          
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: ./
+          
       - name: Run tests
         run: make test-nobuild
 
@@ -81,6 +84,12 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+          
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: ./
 
       - name: Package
         run: |
