@@ -47,8 +47,21 @@ jobs:
               --version-suffix "${{ steps.set-version.outputs.effective_version }}"
           done
 
-      - name: Upload NuGet packages
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-packages
-          path: ./nupkg
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "Automated release for ${GITHUB_REF_NAME}" \
+            nupkg/*.nupkg
+
+      - name: 📦 Push packages to NuGet
+        run: |
+          for pkg in nupkg/**/*.nupkg; do
+            echo "Pushing $pkg..."
+            dotnet nuget push "$pkg" \
+              --api-key "${{ secrets.NUGET_API_KEY }}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
