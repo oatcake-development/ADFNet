@@ -23,11 +23,7 @@ jobs:
       - name: Set version
         id: set-version
         run: |
-          if [[ "${GITHUB_REF_NAME}" == v* ]]; then
-            echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-          else
-            echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-          fi
+          echo "effective_version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
       - name: Restore dependencies
         run: dotnet restore
