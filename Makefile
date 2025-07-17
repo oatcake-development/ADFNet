@@ -10,10 +10,8 @@ VERSION_SUFFIX ?= preview.$(shell date +%Y%m%d%H%M)
 # Default target
 all: clean build test-nobuild package-nobuild
 
-package-preview: clean build test-nobuild package-preview-nobuild
-
 # Build the solution
-build:
+build: clean
 	@echo "🔧 Building $(SOLUTION_NAME)..."
 	dotnet build $(SOLUTION_NAME).sln -c $(CONFIGURATION)
 

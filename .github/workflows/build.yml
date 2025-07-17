@@ -69,7 +69,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Run tests
-        run: make test
+        run: make test-nobuild
 
   package:
     name: 📦 Package NuGet
@@ -89,7 +89,7 @@ jobs:
             make package-nobuild
           else
             echo "🔬 Preview build with suffix ${{ needs.versioning.outputs.effective_version }}"
-            make package-preview VERSION_SUFFIX=${{ needs.versioning.outputs.effective_version }}
+            make package-preview-nobuild VERSION_SUFFIX=${{ needs.versioning.outputs.effective_version }}
           fi
 
       - uses: actions/upload-artifact@v4
