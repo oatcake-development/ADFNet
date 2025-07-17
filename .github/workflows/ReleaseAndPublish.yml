@@ -43,12 +43,14 @@ jobs:
             --notes "Automated release for ${GITHUB_REF_NAME}" \
             nupkg/*.nupkg
 
-      - name: 📦 Push packages to NuGet
+      - name: Push packages to NuGet
         run: |
           for pkg in nupkg/**/*.nupkg; do
-            echo "Pushing $pkg..."
-            dotnet nuget push "$pkg" \
-              --api-key "${{ secrets.NUGET_API_KEY }}" \
-              --source https://api.nuget.org/v3/index.json \
-              --skip-duplicate
+            if [[ "$pkg" != *.symbols.nupkg ]]; then
+              echo "Pushing $pkg..."
+              dotnet nuget push "$pkg" \
+                --api-key "${{ secrets.NUGET_API_KEY }}" \
+                --source https://api.nuget.org/v3/index.json
+            fi
           done
+
