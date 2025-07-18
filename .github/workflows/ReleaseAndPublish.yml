@@ -24,8 +24,8 @@ jobs:
           
       - name: output
         run: |
-          echo ${{ steps.version.outputs.version }}    
-
+          echo "VERSION=${{ steps.version.outputs.version }}" >> $GITHUB_ENV
+          
       - name: Build
         run: dotnet build --configuration Release
 
@@ -42,9 +42,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ steps.version.outputs.version }}" \
-            --title "${{ steps.version.outputs.version }}" \
-            --notes "Automated release for ${{ steps.version.outputs.version }}" \
+          gh release create "${VERSION}" \
+            --title "${VERSION}" \
+            --notes "Automated release for ${VERSION}" \
             nupkg/*.nupkg
 
       - name: Push packages to NuGet
