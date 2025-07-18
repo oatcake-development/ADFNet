@@ -18,9 +18,10 @@ jobs:
           
       - name: run minver
         id: version
-        uses: thefringeninja/action-minver
+        uses: thefringeninja/action-minver@2.0.0-preview1
         with:
           tag-prefix: 'v'
+          
       - name: output
         run: |
           echo ${{ steps.version.outputs.version }}    
