@@ -24,8 +24,6 @@ jobs:
           for proj in ./ADFNet.*/*.csproj; do
             dotnet pack "$proj" \
               --no-build \
-              --include-symbols \
-              --include-source \
               --configuration Release \
               --output ./nupkg
           done

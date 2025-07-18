@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <MinVerTagPrefix>v</MinVerTagPrefix>
         <MinVerBuildMetadata>build</MinVerBuildMetadata>
         <Authors>Lee Williams</Authors>
@@ -12,6 +12,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/oatcake-development/ADFNet</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <PrivateAssets>all</PrivateAssets>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
