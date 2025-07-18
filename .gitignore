@@ -6,3 +6,4 @@ riderModule.iml
 .idea
 nupkg
 /*.DotSettings.user
+.DS_Store
