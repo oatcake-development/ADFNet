@@ -1,4 +1,4 @@
-name: 📦 Package NuGet and Create Release
+name: Package NuGet and Create Release
 
 on:
   workflow_dispatch: # Manual trigger from GitHub UI
@@ -20,7 +20,7 @@ jobs:
         id: version
         uses: thefringeninja/action-minver
         with:
-          tag-prefix: v
+          tag-prefix: 'v'
       - name: output
         run: |
           echo ${{ steps.version.outputs.version }}    
