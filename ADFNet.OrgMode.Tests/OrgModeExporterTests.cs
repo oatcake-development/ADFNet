@@ -42,7 +42,7 @@ public class OrgModeExporterTests
     {
         var node = new HardBreakNode();
         var output = _exporter.Export(node);
-        Assert.That(output, Is.EqualTo("\n"));
+        Assert.That(NormalizeNewlines(output), Is.EqualTo("\n"));
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class OrgModeExporterTests
 
         var output = _exporter.Export(paragraph);
         var expected = "This is a paragraph.\nContinued.\n";
-        Assert.That(output, Is.EqualTo(expected));
+        Assert.That(NormalizeNewlines(output), Is.EqualTo(expected));
     }
 
     [Test]
@@ -77,7 +77,7 @@ public class OrgModeExporterTests
         
         var output = _exporter.Export(list);
         var expected = "- First item\n- Second item\n";
-        Assert.That(output, Is.EqualTo(expected));
+        Assert.That(NormalizeNewlines(output), Is.EqualTo(expected));
     }
     
     [Test]
@@ -130,4 +130,6 @@ public class OrgModeExporterTests
         Assert.That(result, Does.Contain("styled"));
         Assert.That(result, Does.Contain("*") & Does.Contain("/"));
     }
+
+    private string NormalizeNewlines(string input) => input.Replace("\r\n", "\n");
 }
